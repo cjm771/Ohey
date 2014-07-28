@@ -1,12 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Ohey</title>
+  <title>O..hey. | <%= controller.controller_name.capitalize %> | <%= controller.action_name.capitalize %></title>
+<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Leckerli+One' rel='stylesheet' type='text/css'>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
 </head>
 <body>
+	<div id='menu'>
+		<div id='menu_wpr'>
+			<% if !logged_in? %>
+			<%= link_to "Home", root_path %>
+			<%= link_to "Login", login_path %>
+			<%= link_to "Register", register_path %>
+			<% else %>
+			<%= image_tag @current_user.gravatar_url, :class => "gravatar", :title => "Hi, #{@current_user.first_name}!" %>
+			<span class='menu_icon' data-toggle='dropdown'> &#9776;</span>
+			  <ul class="dropdown-menu pull-right" role="menu">
+			     <li><a href="#">My Blog</a></li>
+			    <li><%= link_to "My Posts", my_posts_path %></li>
+			    <li><a href="#">New Post</a></li>
+			    <li><%= link_to "Settings", config_path %></li>
+			      <li class="divider"></li>
+			       <li><%= link_to "Home", root_path %></li>
+			        <li><a href="#">Help</a></li>
+			         <li><a href="#">About</a></li>
+			    <li class="divider"></li>
+			    	<li><%= link_to "Logout", logout_path,  method: :delete %></li>
+			  </ul>
+			<% end %>
+		</div>
+	</div>
+	<div id='header'>
+		<%= link_to "O..hey.", root_path %>
+	</div>
+
 
 <%= yield %>
 
