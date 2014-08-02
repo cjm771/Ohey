@@ -22,12 +22,18 @@ var ohey = (function($){
 					if (fieldName != null){
 						$(this).attr("data-saver", fieldName[1] );
 						
-						if (!$(this).attr('data-noautosubmit')){
+						
 							$(this).bind('keyup change paste', function() { 
-								that.ajaxSaverSync(this);
-							    $(this).closest('form').delay(200).submit();
+								if (!$(this).attr('data-noautosubmit')){
+									//attempt to sync on key up if autosumbit
+									that.ajaxSaverSync(this);
+								    $(this).closest('form').delay(200).submit();
+								}else{
+									//else just clear errors out
+									 $(this).closest('form').find('.error_notifier').remove();
+								}
 							});
-						}
+						
 						 $(this).closest('form').on("ajax:success", function(e, data, status, xhr){
 		   					 $(this).find(".glyphicon-remove").remove();
 		   					$("[data-updated-sync]").each(function(){
@@ -44,10 +50,13 @@ var ohey = (function($){
 
 							$(form).find(".glyphicon-remove").remove();
 							$.each(errorData.errors, function(field, error){
-								var errorSymbol = $("<i class='glyphicon glyphicon-remove'></i>");
+								var errorSymbol = $("<i class='error_notifier glyphicon glyphicon-remove has_tooltip'></i>");
 								errorSymbol.attr("title", field+" "+error[0]+((errorData.model==undefined) ? "" : ", so it will remain as '"+errorData.model[field]+"'"));
 								var el = $(form).find("[data-saver='"+field+"']");
-								el.after(errorSymbol);
+								el.after(errorSymbol.hide().show("slow", function(){
+									that.reloadTooltip();
+								}));
+
 								if (errorData.model!=undefined)
 									that.ajaxSaverSync(el,errorData.model[field]);
 							});
@@ -66,6 +75,10 @@ var ohey = (function($){
 			}
 			//load proper tab
 			this.bsTabsHashFix();
+		},
+		reloadTooltip : function(){
+   			 //tooltip those
+   			 $(".has_tooltip").tooltip();
 		},
 		slideLeft : function(el, startfinish){
 			var that = this;
@@ -178,8 +191,8 @@ var ohey = (function($){
 			$('textarea.autosize').autosize({append : "\n\n"});
 			//bs tabs click first
    			 $('#settingsTabs li > a:first').tab('show');
-   			 //tooltip those
-   			 $(".has_tooltip").tooltip();
+   			 //bs tooltips
+   			this.reloadTooltip();
    			 //settings init
    			 this.settingsInit();
    			 //edit post
