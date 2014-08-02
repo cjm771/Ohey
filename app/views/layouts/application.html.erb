@@ -20,7 +20,7 @@
 			<span class='menu_icon' data-toggle='dropdown'> &#9776;</span>
 			  <ul class="dropdown-menu pull-right" role="menu">
 
-			    <% if @current_user.current_blog %>
+			    <% if @current_user.current_blog.id && @current_user.current_blog %>
 			    	<li><a href="#">My Blog</a></li>
 			   		<li><%= link_to "My Posts", my_posts_path %></li>
 			    	<li><%= link_to "New Post", new_blog_post_path(@current_user.current_blog.id) %>
