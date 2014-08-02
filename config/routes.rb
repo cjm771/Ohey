@@ -2,8 +2,8 @@ Rails.application.routes.draw do
 
   root to: "pages#home"
 
-  get "/page/home"
-  get "/page/about"
+  get "/pages/home"
+  get "/pages/about"
 
   get "/my-posts" => "users#my_posts", as: :my_posts
   patch "/load-blog/:id" => "users#load_blog", as: :load_blog
