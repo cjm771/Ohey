@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  root to: "pages#home"
+
   get "/my-posts" => "users#my_posts", as: :my_posts
   patch "/load-blog/:id" => "users#load_blog", as: :load_blog
   get "/register" => "users#new", as: :register
@@ -9,7 +11,7 @@ Rails.application.routes.draw do
   get "/config" => "users#edit", as: :config
 
 
-  root "pages#home"
+
 
   resources :sessions, only: [:new, :create]
   resources :users, only: [:create, :update]
