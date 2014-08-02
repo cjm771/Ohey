@@ -18,13 +18,17 @@ class User < ActiveRecord::Base
 		update_attribute(:password_reset_token, SecureRandom.urlsafe_base64(48))
 	end
 
+	def full_name
+		self.first_name+" "+self.last_name
+	end
+
 	def gravatar_url
-		"http://gravatar.com/avatar/"+Digest::MD5.hexdigest(email.strip.downcase)
+		"http://gravatar.com/avatar/"+Digest::MD5.hexdigest(email.strip.downcase)+"?d=mm"
 	end
 
 	def all_roles
 		allBlogs = [];
-		Role.where(user_id: self.id, active: true).each do |role|
+		Role.where(user_id: self.id, active: 1).each do |role|
 			if is_blog_member? role.blog_id 
 				allBlogs.push role
 			end
@@ -39,7 +43,7 @@ class User < ActiveRecord::Base
 	def current_role
 		 if is_blog_member?
 			#blog should be scoped to user so we find role
-			Role.where(blog_id: current_blog.id, user_id: self.id, active: true).first.role
+			Role.where(blog_id: current_blog.id, user_id: self.id, active: 1).first.role
 		end
 	end
 
@@ -56,7 +60,7 @@ class User < ActiveRecord::Base
 		 Blog.exists?(id) && Role.exists?(
 		 		blog_id: id, 
 		 		user_id: self.id, 
-		 		active: true)
+		 		active: 1)
 			
 	end
 
@@ -66,6 +70,8 @@ class User < ActiveRecord::Base
 		# validate that you still have permissions, if not set to nil
 		if is_blog_member?
 		 	Blog.find(self.current_blog_id)
-		 end
+		else
+			self.current_blog_id = nil if self.current_blog_id!=nil
+		end
 	end
 end

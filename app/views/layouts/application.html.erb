@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>O..hey. | <%= controller.controller_name.capitalize %> | <%= controller.action_name.capitalize %></title>
-<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+<link href="//fonts.googleapis.com/css?family=Source+Sans Pro:200italic,200,300italic,300,400italic,400,600italic,600,700italic,700,900italic,900" rel="stylesheet" type="text/css">
   <link href='http://fonts.googleapis.com/css?family=Leckerli+One' rel='stylesheet' type='text/css'>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
@@ -19,9 +19,16 @@
 			<%= image_tag @current_user.gravatar_url, :class => "gravatar", :title => "Hi, #{@current_user.first_name}!" %>
 			<span class='menu_icon' data-toggle='dropdown'> &#9776;</span>
 			  <ul class="dropdown-menu pull-right" role="menu">
-			     <li><a href="#">My Blog</a></li>
-			    <li><%= link_to "My Posts", my_posts_path %></li>
-			    <li><a href="#">New Post</a></li>
+
+			    <% if @current_user.current_blog %>
+			    	<li><a href="#">My Blog</a></li>
+			   		<li><%= link_to "My Posts", my_posts_path %></li>
+			    	<li><%= link_to "New Post", new_blog_post_path(@current_user.current_blog.id) %>
+			    <% else %>
+			    	<li><%= link_to "Create blog", new_blog_path %></li>
+			    <% end %>
+			    </li>
+			    
 			    <li><%= link_to "Settings", config_path %></li>
 			      <li class="divider"></li>
 			       <li><%= link_to "Home", root_path %></li>
@@ -33,12 +40,23 @@
 			<% end %>
 		</div>
 	</div>
-	<div id='header'>
-		<%= link_to "O..hey.", root_path %>
+
+
+<div id='container'>
+	<div class='drawer left'>
+		<div class='drawer_wpr'>
+		<%= yield :left_drawer %>
+		
+		</div>
+
 	</div>
-
-
-<%= yield %>
+	<div class='main'>
+		<div id='header'>
+			<%= link_to "O..hey.", root_path %>
+		</div>
+		<%= yield %>
+	</div>
+</div>
 
 </body>
 </html>
