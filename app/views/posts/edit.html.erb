@@ -1,0 +1,63 @@
+<div class='editor'>
+<%= form_for [@blog, @post], remote: true, :html => {:role => "form"} do |f|  %>
+
+  <div class="form-group">
+    <%= f.text_field :title, :class => "bigger", :placeholder => "Title goes here..", :autocomplete => 'off'  %>
+  </div>
+  <div class="form-group">
+    <%= f.text_area :description,  :class=> "autosize smaller", :placeholder => "This is my post."%>
+  </div>
+<% end %>
+<div class='rt-wpr'>
+	<div class='rt-textArea'>
+    <% if @post.description %>
+		<%= @post.description.html_safe %>
+    <% end %>
+	</div>
+</div>
+
+<div id='bl_corner'>
+	<div id='bl_wpr'>
+		<div id='left_drawer_icon' class='drawer_icon glyphicon glyphicon-cog'></div>
+	</div>
+</div>
+</div>
+
+<div id='br_corner'>
+  <div id='br_wpr'>
+    Updated:
+    <div data-updated-sync data-time="<%= @post.updated_at.strftime('%Y-%m-%dT%H:%M:%S%z'); %>"><%= (time_ago_in_words @post.updated_at) + " ago" %></div><br/>
+    <%= link_to "Back to Posts", my_posts_path, :class => "ohey_btn" %>
+  </div>
+</div>
+</div>
+
+
+
+<% content_for :left_drawer do %>
+  <p>
+    <h4>
+      <div class='post_title_settings' data-saver-sync='edit_post_title'><%= @post.title %></div>
+    </h4>
+    <p><i>Updated <b data-updated-sync data-time="<%= @post.updated_at.strftime('%Y-%m-%dT%H:%M:%S%z'); %>"><%= (time_ago_in_words @post.updated_at) + " ago" %></b></i></p>
+    <br/>
+    <%= form_for [@blog, @post], remote: true, :html => {:role => "form"} do |f|  %>
+      <%= f.check_box :published  %>
+    <% end %>
+    <p> <br/><br/>Created: <%= (time_ago_in_words @post.created_at) + " ago" %> <br/>Author: <%=@post.user.full_name%></p>
+    <hr>
+    <p style='width: 90%; color: #666'>
+      You can add rich text and media, by highlighting some of your text and clicking on one of the options that appear such as link,
+      image,bold,etc.
+      <br/>
+      <table style='width: 20%; color: #666; text-align: left'>
+        <tr>
+         <td> <b> &#8984;B </b></td><td>Bold  </td>
+        </tr>
+        <tr>
+         <td> <b> &#8984;I </b></td><td>Italic  </td>
+        </tr>
+      </table>
+    </p>
+  </p>
+<% end %>

@@ -1,0 +1,36 @@
+<div class='floatBox'>
+<h1>Wanna Register?</h1>
+<%= form_for @user, :html => {:role => "form"} do |f| %>
+  <% if @user.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
+
+      <ul>
+      <% @user.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.text_field :first_name, :placeholder => "First Name", :autocomplete => 'off' %>
+  </div>
+  <div class="form-group">
+    <%= f.text_field :last_name, :placeholder => "Last Name",  :autocomplete => 'off'%>
+  </div>
+  <div class="form-group">
+    <%= f.text_field :email, :placeholder => "Email", :autocomplete => 'off'  %>
+  </div>
+  <div class="form-group">
+    <%= f.password_field :password,  :placeholder => "Password"%>
+  </div>
+    <div class="form-group">
+    <%= f.password_field :password_confirmation, :placeholder => "Confirm Your Password"  %>
+  </div>
+  <div class="form-group">
+    <%= f.submit "Sign Up", :class => "btn btn-primary" %>
+  </div>
+<% end %>
+</div>
+

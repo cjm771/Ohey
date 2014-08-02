@@ -1,0 +1,29 @@
+<div class='floatBox'>
+
+<%= form_for @blog, :html => {:role => "form"} do |f|  %>
+
+
+<% if @blog.errors.any? %>
+<div id="error_explanation">
+  <h2><%= pluralize(@blog.errors.count, "error") %> prohibited this blog from being created:</h2>
+
+  <ul>
+  <% @blog.errors.full_messages.each do |message| %>
+    <li><%= message %></li>
+  <% end %>
+  </ul>
+</div>
+<% end %>
+
+
+  <div class="form-group">
+    <%= f.text_field :title, :class => "bigger", :placeholder => "#{@current_user.first_name}'s blog", :autocomplete => 'off'  %>
+  </div>
+  <div class="form-group">
+    <%= f.text_area :description,  :class=> "autosize smaller", :placeholder => "This is a description of my dope blog.."%>
+  </div>
+	<div class="form-group">
+    <%= f.submit "Create Blog", :class => "btn btn-primary" %>
+  </div>
+<% end %>
+</div>

@@ -1,0 +1,51 @@
+<div class='floatBox'>
+	<% if @blog %>
+	<h1><%= @blog.title %> : My Posts</h1>
+	<%= link_to  "Add a Post", new_blog_post_path(@blog.id), :class=>"btn btn-primary" %>
+	<%= render partial: 'layouts/flash' %>
+	<% else %>
+	<h1>Whoops, we can't find your blog!</h1>
+	<p> You currently don't have a current blog set. Set your blog in the config or <%= link_to "Create a new blog", blogs_new_path %>.</p>
+	<% end %>
+	
+	<% if @blog && !@blog.posts.empty? %>
+	<table class='posts'>
+		<thead>
+		<tr>
+			<th>
+				Title
+			</th>
+			<th>
+				Author
+			</th>
+			<th>
+				Date
+			</th>
+		</tr>
+		</thead>
+		<tbody>
+			<% @blog.posts.reverse.each do |p| %>
+				<tr class='post_item'>
+					<td style='position: relative'>
+						<% if !p.published %>
+							<span class='draft_label'>Draft</span>
+						<% end %>
+						<%= link_to p.title, edit_blog_post_path(@blog.id, p.id) %>  
+						<%= link_to "", blog_post_path(@blog.id, p.id), :method => :delete, data: { confirm: 'Are you sure?' }, :class => 'icon delete_icon glyphicon glyphicon-remove' %>
+						
+					</td>
+					<td><%= p.user.first_name+" "+p.user.last_name %> </td>
+					<td style='vertical-align: middle'>
+						<i style='font-size: 10px; color: #a3a3a3'>Updated <%= (time_ago_in_words p.updated_at) + " ago" %></i>
+						<br/><%=  p.created_at.strftime("%F") %></td>
+				</tr>
+			<% end %>
+		</tbody>
+		
+	</table>
+	<% else %>
+	<br><br>
+	<p><i>Currently There are no posts!</i></p>
+	<% end %>
+
+</div>

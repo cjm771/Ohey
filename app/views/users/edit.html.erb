@@ -1,0 +1,73 @@
+<div class='floatBox'>
+<h1>Settings</h1>
+<%= render partial: 'layouts/flash' %>
+<div class="dropdown dd-loadBlog">
+
+<button class='btn btn-primary' data-toggle='dropdown'>
+	<% if @blog %>
+	<span data-saver-sync='edit_blog_title'><%= @blog.title%> </span>
+	<% else %>
+		<i> No active Blog</i>
+	<% end %>
+	<span class='caret'></span></button>
+	  <ul class="dropdown-menu pull-right" role="menu2">
+	  	<% @allRoles.each do |r| %>
+	  		<% if r.blog_id != @blog.id %>
+	  		<li><%= link_to r.blog.title,  load_blog_path(r.blog_id), :method => :patch %></li>
+	  		<% end %>
+	  	<% end %>
+	  	<li class='divider'></li>
+	  	<li><%= link_to "Create New", new_blog_path %></li>
+	  </ul>
+</div>
+
+
+<!-- Nav tabs -->
+<ul id='settingsTabs' class="nav nav-tabs" role="tablist">
+<% if @blog %>
+  <li><a href="#blogInfo" role="tab" data-toggle="tab">Blog Info</a></li>
+  <li><a href="#users" role="tab" data-toggle="tab">Users</a></li>
+ <% end %>
+  <li><a href="#profile" role="tab" data-toggle="tab">My Profile</a></li>
+</ul>
+
+<!-- Tab panes -->
+<div class="tab-content">
+<% if @blog %>
+  <div class="tab-pane" id="blogInfo">
+  	<p><br/>You are a <em><%= @current_user.current_role_text %></em> on this blog.</p>
+	<%= form_for @blog, remote: true, :html => {:role => "form"} do |f| %>	
+  	 <div class="form-group">
+    <%= f.text_field :title, :class => "bigger", :placeholder => @current_user.first_name+"'s blog", :autocomplete => 'off' %>
+	  </div>
+	  <div class="form-group">
+	    <%= f.text_area :description, :class => "autosize smaller", :placeholder => "Description",  :autocomplete => 'off'%>
+	  </div>
+  	<% end %>
+  </div>
+  <div class="tab-pane" id="users">
+  	<%= form_for [@blog, @role], remote: true, :html => {:role => "form"} do |f| %>	
+  	<%= render partial: 'layouts/form_error', locals: {:_model => @role} %>
+  	 <div class="form-group">
+  		<%= f.text_field :email, :placeholder => "Enter Email", :autocomplete => 'off', :data => {:noAutoSubmit => true}  %>
+  		<%= f.submit "+", :class => "btn btn-primary btn-inline icon" %>
+  	</div> 
+  	<% end %>
+  </div>
+ <% end %>
+  <div class="tab-pane" id="profile">
+  	<%= image_tag @current_user.gravatar_url, :class => 'gravatar' %>
+  	<%= form_for @current_user, remote: true,  :html => {:role => "form"} do |f| %>	
+  	 <div class="form-group">
+    <%= f.text_field :first_name, :placeholder => "First Name", :autocomplete => 'off' %>
+	  </div>
+	  <div class="form-group">
+	    <%= f.text_field :last_name, :placeholder => "Last Name",   :autocomplete => 'off'%>
+	  </div>
+	  <div class="form-group">
+	    <%= f.text_area :about, :class => "autosize smaller", :placeholder => "A little bit about me..",   :autocomplete => 'off'%>
+	  </div>
+  	<% end %>
+  	</div>
+</div>
+</div>
