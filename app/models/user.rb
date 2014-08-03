@@ -93,7 +93,8 @@ class User < ActiveRecord::Base
 		if is_blog_member?
 		 	Blog.find(self.current_blog_id)
 		else
-			self.current_blog_id = nil if self.current_blog_id!=nil
+			update_attribute(:current_blog_id, nil) if self.current_blog_id!=nil
+			return nil
 		end
 	end
 end

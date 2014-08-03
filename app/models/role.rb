@@ -41,8 +41,8 @@ class Role < ActiveRecord::Base
   }
 
   def default_values
-    self.role = 0 
-    self.active = 0
+    self.role = 0 if self.active==nil
+    self.active = 0 if self.active==nil
     self.token = SecureRandom.urlsafe_base64(48)
     user = User.find_by :email => self.email
     

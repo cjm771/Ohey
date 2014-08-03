@@ -1,5 +1,5 @@
 class UserMailer < ActionMailer::Base
-  default from: "no-reply@ohey.herokuapp.com"
+  default from: "no-reply@ohey.mailgun.org"
   default_url_options[:host] = Rails.env.production?  ?  "ohey.herokuapp.com" : "localhost:3000" 
 
   def invite(role)

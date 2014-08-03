@@ -12,7 +12,7 @@
 	<span class='caret'></span></button>
 	  <ul class="dropdown-menu pull-right" role="menu2">
 	  	<% @allRoles.each do |r| %>
-	  		<% if r.blog_id != @blog.id %>
+	  		<% if !@blog || r.blog_id != @blog.id %>
 	  		<li><%= link_to r.blog.title,  load_blog_path(r.blog_id), :method => :patch %></li>
 	  		<% end %>
 	  	<% end %>
