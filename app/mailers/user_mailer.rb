@@ -1,5 +1,5 @@
 class UserMailer < ActionMailer::Base
-  default from: "no-reply@ohey.mailgun.org"
+  default from: "O..Hey <no-reply@ohey.mailgun.org>"
 
   def invite(role)
   	@role = role
