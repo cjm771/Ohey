@@ -252,6 +252,13 @@ a.open_invites_badge:hover{
 .invites-table td:first-child{
 	width: 80%;
 }
+
+.invites-table tr:hover .icon{
+	display: inline;
+}
+.invites-table tr .icon{
+	display: none;
+}
 table{
 	margin: 30px 0;
 	width: 100%;
@@ -612,6 +619,9 @@ textarea:focus:-moz-placeholder { color:#0099FF; font-weight: normal;}
 	opacity: .7;
 }
 
+.users_table td form{
+	display: inline;
+}
 
 .users_table td .icon{
 	display: none;

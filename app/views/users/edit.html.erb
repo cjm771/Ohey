@@ -56,14 +56,16 @@
   <!-- users in blog --> 
   <div class="tab-pane" id="users">
        
-  	<%= form_for [@blog, @role], remote: true, :html => {:role => "form"} do |f| %>	
+  	<%= form_for [@blog, @role], remote: true, :data => { :success_callback => "addUserSuccess"}, :html => {:role => "form"} do |f| %>	
   	<%= render partial: 'layouts/form_error', locals: {:_model => @role} %>
   	 <div class="form-group">
       <span id='newuser_role' class='has_tooltip' title='Invite as Collaborator. Click to change.'  style='position: relative; '>
         <span class='newuser_moderator' style='position: absolute; top: -2px; font-size:8px; font-weight: bold; left:-8px; display: none'>M</span>
-    		<span class='icon btn-inline glyphicon glyphicon-user' style='margin-top: 8px; margin-right: 15px'></span>
+    		<span class='icon btn-inline glyphicon glyphicon-user' style='margin-top: 8px; margin-right: 15px'>
+        </span>
       </span>
-      <%= f.text_field :email, :placeholder => "Enter Email", :autocomplete => 'off', :data => {:noAutoSubmit => true}  %>
+      <%= f.hidden_field :role, :value => 0,  :autocomplete => 'off', :data => {:noAutoSubmit => true }  %>
+       <%= f.text_field :email, :placeholder => "Enter Email", :autocomplete => 'off', :data => {:noAutoSubmit => true }  %>
 
   		<%= f.submit "+", :class => "btn btn-primary btn-inline icon" %>
 
@@ -74,14 +76,26 @@
         <% @allUsers.each do |u| %>
             <tr class='<%= Role::STATUS_TEXT[u.active].downcase  %>'>
               <td>
-                  <% if u.user == @current_user %>
+                  <% if is_current? u.user %>
                       <%= image_tag  @current_user.gravatar_url, :class => "gravatar_sm"  %> 
                  <% else %>
                     <%= image_tag  User::gravatar_url(u.email), :class => "gravatar_sm" if u.email %> 
                   <% end %>
 
-                <%= u.user ? u.user == @current_user ? "You" : u.user.full_name : u.email %> <a class='icon glyphicon glyphicon-remove'></a></td>
-              <td><%= Role::ROLE_TEXT[u.role] %> <a class='icon glyphicon glyphicon-wrench'></a> </td>
+                <%= u.user ? is_current?(u.user) ? "You" : u.user.full_name : @current_user.is_creator? ? u.email : u.email.split("@")[0]+"@ ... " %> 
+              <% if !is_current? u.user %> 
+                <%= link_to "", blog_role_path(@blog.id, u.id), :method => :delete, data: { confirm: 'Are you sure?' }, :class => 'icon delete_icon glyphicon glyphicon-remove' %>
+               <% end %>
+              </td>
+              <td>
+                <span class='role_name'><%= Role::ROLE_TEXT[u.role] %> </span>
+
+                <% if !is_current? u.user %>
+                  <%= form_for [@blog, u], remote: true, :data => { :success_callback => "changeRoleSuccess"}, :html => { :role => "form"}  do |f| %>
+                  <%= f.hidden_field :role,  :autocomplete => 'off'  %>
+                  <span class='changeRole_icon icon glyphicon glyphicon-wrench'></span>
+                  <% end %>
+                <% end %> </td>
               <td><i><%= Role::STATUS_TEXT[u.active] %></i></td>
             </tr>
         <% end %>
@@ -93,7 +107,7 @@
  <% end %>
   <!-- profile --> 
   <div class="tab-pane" id="profile">
-  	<%= image_tag @current_user.gravatar_url, :class => 'gravatar' %>
+  	<%= image_tag @current_user.gravatar_url, :class => 'gravatar has_tooltip', :data => {:placement => "right"} ,:title => "Change profile image via gravatar.com." %>
   	<%= form_for @current_user, remote: true,  :html => {:role => "form"} do |f| %>	
   	 <div class="form-group">
     <%= f.text_field :first_name, :placeholder => "First Name", :autocomplete => 'off' %>
@@ -121,8 +135,8 @@
             <tr class='<%= Role::STATUS_TEXT[i.active].downcase  %>'>
               <td><%=  image_tag  i.blog.user.gravatar_url, :class => "gravatar_sm" %> <b><%= i.blog.user.first_name.capitalize %></b> invites you to be a <b><%= Role::ROLE_TEXT[i.role] %></b> on '<%=i.blog.title %>'  </td>
               <td>
-                  <a class='icon glyphicon glyphicon-ok'></a>
-                  <a class='icon glyphicon glyphicon-remove'></a>
+                  <a class='icon glyphicon glyphicon-ok has_tooltip' title='Accept'></a>
+                  <a class='icon glyphicon glyphicon-remove has_tooltip' title='Deny'></a>
                 </td>
             </tr>
         <% end %>

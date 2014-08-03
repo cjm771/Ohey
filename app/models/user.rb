@@ -44,6 +44,26 @@ class User < ActiveRecord::Base
 		 current_role == Role::CREATOR
 	end
 
+	def can_edit_role? role
+		blog = role.blog
+		if role && blog
+			editorRole = self.get_role blog
+			editorRole && editorRole.role>role.role
+		else
+			false
+		end
+	end
+
+	def can_edit_post? post
+		if post.user
+			authorRole = post.user.get_role post.blog
+			editorRole = self.get_role role.blog
+			authorRole && editorRole && editorRole.role>authorRole.role
+		else
+			false
+		end
+	end
+
 	def current_role
 		 if is_blog_member?
 			#blog should be scoped to user so we find role
@@ -51,11 +71,16 @@ class User < ActiveRecord::Base
 		end
 	end
 
-
 	def current_role_text
 		role = current_role
 		if role
 			Role::ROLE_TEXT[role]
+		end
+	end
+
+	def get_role blog
+		if is_blog_member? blog.id
+			Role.where(blog_id: blog.id, user_id: self.id, active: 1).first
 		end
 	end
 

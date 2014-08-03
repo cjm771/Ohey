@@ -13,7 +13,7 @@ Rails.application.routes.draw do
   get "/login" => "sessions#new", as: :login
   post "/login" => "sessions#create", as: :sessions
   get "/config" => "users#edit", as: :config
-
+  post "blogs/:blog_id/roles/:id"   => "roles#update"
 
 
 
@@ -21,7 +21,7 @@ Rails.application.routes.draw do
   resources :users, only: [:create, :update]
 
   resources :blogs do
-    resources :roles, only: [:new, :create]
+    resources :roles, only: [:new, :update, :create, :destroy]
     resources :posts 
   end
 
