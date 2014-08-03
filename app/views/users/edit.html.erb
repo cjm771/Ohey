@@ -29,11 +29,18 @@
   <li><a href="#users" role="tab" data-toggle="tab">Users</a></li>
  <% end %>
   <li><a href="#profile" role="tab" data-toggle="tab">My Profile</a></li>
+<% if @current_user.has_open_invites? %>
+   <li>  
+        <div class='open_invites_badge' class='open_invites_badge'> <%= @current_user.open_invites_count %></div>
+        <a style='padding-right: 30px' href="#invites" role="tab" data-toggle="tab">Invites</a>
+    </li>
+  <% end %>
 </ul>
 
 <!-- Tab panes -->
 <div class="tab-content">
 <% if @blog %>
+  <!-- blog info --> 
   <div class="tab-pane" id="blogInfo">
   	<p><br/>You are a <em><%= @current_user.current_role_text %></em> on this blog.</p>
 	<%= form_for @blog, remote: true, :html => {:role => "form"} do |f| %>	
@@ -45,16 +52,46 @@
 	  </div>
   	<% end %>
   </div>
+
+  <!-- users in blog --> 
   <div class="tab-pane" id="users">
+       
   	<%= form_for [@blog, @role], remote: true, :html => {:role => "form"} do |f| %>	
   	<%= render partial: 'layouts/form_error', locals: {:_model => @role} %>
   	 <div class="form-group">
-  		<%= f.text_field :email, :placeholder => "Enter Email", :autocomplete => 'off', :data => {:noAutoSubmit => true}  %>
+      <span id='newuser_role' class='has_tooltip' title='Invite as Collaborator. Click to change.'  style='position: relative; '>
+        <span class='newuser_moderator' style='position: absolute; top: -2px; font-size:8px; font-weight: bold; left:-8px; display: none'>M</span>
+    		<span class='icon btn-inline glyphicon glyphicon-user' style='margin-top: 8px; margin-right: 15px'></span>
+      </span>
+      <%= f.text_field :email, :placeholder => "Enter Email", :autocomplete => 'off', :data => {:noAutoSubmit => true}  %>
+
   		<%= f.submit "+", :class => "btn btn-primary btn-inline icon" %>
+
   	</div> 
   	<% end %>
+    <div class='users_table'>
+      <table>
+        <% @allUsers.each do |u| %>
+            <tr class='<%= Role::STATUS_TEXT[u.active].downcase  %>'>
+              <td>
+                  <% if u.user == @current_user %>
+                      <%= image_tag  @current_user.gravatar_url, :class => "gravatar_sm"  %> 
+                 <% else %>
+                    <%= image_tag  User::gravatar_url(u.email), :class => "gravatar_sm" if u.email %> 
+                  <% end %>
+
+                <%= u.user ? u.user == @current_user ? "You" : u.user.full_name : u.email %> <a class='icon glyphicon glyphicon-remove'></a></td>
+              <td><%= Role::ROLE_TEXT[u.role] %> <a class='icon glyphicon glyphicon-wrench'></a> </td>
+              <td><i><%= Role::STATUS_TEXT[u.active] %></i></td>
+            </tr>
+        <% end %>
+      </table>
+    </div>
   </div>
+
+
  <% end %>
+  <!-- profile --> 
   <div class="tab-pane" id="profile">
   	<%= image_tag @current_user.gravatar_url, :class => 'gravatar' %>
   	<%= form_for @current_user, remote: true,  :html => {:role => "form"} do |f| %>	
@@ -68,6 +105,32 @@
 	    <%= f.text_area :about, :class => "autosize smaller", :placeholder => "A little bit about me..",   :autocomplete => 'off'%>
 	  </div>
   	<% end %>
-  	</div>
+  </div>
+
+  <!-- invites -->
+  <% if @current_user.has_open_invites? %>
+   <div class="tab-pane" id="invites">
+    <p>
+      <br/>
+      You have <%= @current_user.open_invites_count %> open <%= "invite".pluralize @current_user.open_invites_count %>.
+      </p> 
+
+       <div >
+      <table class='invites-table'>
+        <% @current_user.open_invites.each do |i| %>
+            <tr class='<%= Role::STATUS_TEXT[i.active].downcase  %>'>
+              <td><%=  image_tag  i.blog.user.gravatar_url, :class => "gravatar_sm" %> <b><%= i.blog.user.first_name.capitalize %></b> invites you to be a <b><%= Role::ROLE_TEXT[i.role] %></b> on '<%=i.blog.title %>'  </td>
+              <td>
+                  <a class='icon glyphicon glyphicon-ok'></a>
+                  <a class='icon glyphicon glyphicon-remove'></a>
+                </td>
+            </tr>
+        <% end %>
+      </table>
+    </div>
+
+   </div>
+  <% end %>
+
 </div>
 </div>

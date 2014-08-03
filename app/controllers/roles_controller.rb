@@ -11,7 +11,8 @@ class RolesController < ApplicationController
 		@role.email.downcase!
 		 respond_to do |format|
 	    if @role.save
-	       msg = { :status => "ok", :message => "Success!" }
+	       UserMailer.invite(@role).deliver
+	       msg = { :status => "ok", :message => "Invitation was sent to #{@role.email}." }
 	      format.json { render :json => msg }
 	    else
 	      format.json { render json: { :errors => @role.errors}, status: :unprocessable_entity }
@@ -22,6 +23,6 @@ class RolesController < ApplicationController
 	 private
     # Never trust parameters from the scary internet, only allow the white list through.
     def role_params
-      params.require(:role).permit(:email)
+      params.require(:role).permit(:email, :role)
     end
 end

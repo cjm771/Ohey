@@ -26,6 +26,10 @@ class User < ActiveRecord::Base
 		"http://gravatar.com/avatar/"+Digest::MD5.hexdigest(email.strip.downcase)+"?d=mm"
 	end
 
+	def self.gravatar_url email
+		"http://gravatar.com/avatar/"+Digest::MD5.hexdigest(email.strip.downcase)+"?d=mm"
+	end
+
 	def all_roles
 		allBlogs = [];
 		Role.where(user_id: self.id, active: 1).each do |role|
@@ -62,6 +66,24 @@ class User < ActiveRecord::Base
 		 		user_id: self.id, 
 		 		active: 1)
 			
+	end
+
+	def has_open_invites?
+		Role.exists?(
+			user_id: self.id,
+			active: 0)
+	end
+
+	def open_invites_count 
+		Role.where(
+			user_id: self.id,
+			active: 0).count
+	end
+
+	def open_invites
+		Role.where(
+			user_id: self.id,
+			active: 0)
 	end
 
 	def current_blog

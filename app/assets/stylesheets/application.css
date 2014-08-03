@@ -52,6 +52,37 @@
 	margin-top: -2px;
 }
 
+.open_invites_badge{
+	z-index: 1;
+	border-radius: 50% !important;
+	position: absolute;
+	background: #000;
+	display: block;
+	font-size: 10px;
+	line-height: 8px;
+	top: 14px;
+	left: 14px;
+	border:0 !important;
+	color: #fff !important;
+	margin: 0px !important;
+	padding: 8px !important;
+}
+
+.nav-tabs .open_invites_badge{
+	display: block;
+	top: 0px; 
+	left: auto;
+	right: 10px;
+	float: left;
+	font-size: 8px;
+	margin: 10px 0px 0 0  !important;
+	line-height: 5px !important;
+	padding: 5px !important;
+}
+
+a.open_invites_badge:hover{
+	background: #0099FF !important;
+}
 /* EDIT PAGE */
 
 
@@ -218,6 +249,9 @@
 	padding: 10px;
 }
 
+.invites-table td:first-child{
+	width: 80%;
+}
 table{
 	margin: 30px 0;
 	width: 100%;
@@ -238,14 +272,22 @@ table td:last-child{
 table thead{
 	display: none;
 }
-table tr.post_item{
+table tr{
 	border-bottom: 1px solid #c0c0c0;
 }
 
-table tr.post_item td{
+table tr td{
 	padding: 20px 0px;
 }
-table tr.post_item:last-child{
+.drawer_wpr table td{
+	padding: 0;
+}
+.drawer_wpr table tr{
+	padding: 0;
+	border: 0 ;
+}
+	
+table tr:last-child{
 	border: none;
 }
 
@@ -302,7 +344,7 @@ table.posts tr.post_item:hover .delete_icon{
   }
 
 
-
+.form-group select,
 .form-group input[type='text'],
 .form-group input[type='password'],
 .form-group input[type='text']:active,
@@ -312,16 +354,18 @@ table.posts tr.post_item:hover .delete_icon{
 .form-group textarea,
 .form-group textarea:active,
 .form-group textarea:focus{
-	outline: none;
+	outline: none !important;
 	text-align: center;
  	background-color: transparent; 
 	border-style: solid; 
 	border-width: 0px 0px 1px 0px; 
 	border-color: #c0c0c0;
+	border-radius: 0px;
+	box-shadow: none;
 	width: 200px;
 	color: #0099ff;
 }
-
+.form-group .field_with_errors select,
 .form-group .field_with_errors input[type='text'],
 .form-group .field_with_errors input[type='password'],
 .form-group .field_with_errors input[type='text']:active,
@@ -371,7 +415,9 @@ textarea:focus:-moz-placeholder { color:#0099FF; font-weight: normal;}
 .field_with_errors input:-moz-placeholder { color:#ff0000; font-weight: normal;}
 
 
-
+.btn{
+	outline: 0 !important;
+}
 .btn-primary{
 	background: #0099ff;
 	border: 0;
@@ -549,4 +595,34 @@ textarea:focus:-moz-placeholder { color:#0099FF; font-weight: normal;}
 	width: auto;
 	vertical-align: middle;
 	border-radius: 50%;
+}
+
+.tab-pane .gravatar_sm{
+	height: 40px;
+	margin: 0 10px 0 0;
+	width: auto;
+	vertical-align: middle;
+	border-radius: 50%;
+}
+
+.users_table tr.invited{
+	opacity: .7;
+}
+.users_table tr.denied{
+	opacity: .7;
+}
+
+
+.users_table td .icon{
+	display: none;
+	margin-left: 5px;
+}
+
+
+.users_table td:hover .icon{
+	display: inline;
+}
+
+#settingsTabs{
+	margin-top: 40px;
 }

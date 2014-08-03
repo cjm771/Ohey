@@ -70,15 +70,32 @@ var ohey = (function($){
 			});
 		},
 		settingsInit : function(){
+			var that = this;
 			if ($('#settingsTabs').length){
 				this.ajaxSaver($('.tab-pane input,.tab-pane textarea'));
 			}
 			//load proper tab
 			this.bsTabsHashFix();
+
+			 //for users change
+			 $("#newuser_role").on("click", function(){
+			 	var moderator = $(this).find(".newuser_moderator");
+			 	console.log("hey "+moderator.attr("class"));
+			 	if (moderator.is(":visible")){
+			 		moderator.hide();
+			 		$(this).attr("title", 'Invite a Collaborator. Click to change.');
+			 	}
+			 	else{
+			 		moderator.show();
+			 		$(this).attr("title", 'Invite a Moderator. Click to change.');
+			 		
+			 	}
+			 	that.reloadTooltip();
+			 });
 		},
 		reloadTooltip : function(){
    			 //tooltip those
-   			 $(".has_tooltip").tooltip();
+   			 $(".has_tooltip").tooltip('destroy').tooltip();
 		},
 		slideLeft : function(el, startfinish){
 			var that = this;
@@ -108,6 +125,9 @@ var ohey = (function($){
 			var ret =  (elH<=winH) ? winH : elH;
 			return ret;
 		},
+		changeRole : function(){
+
+		},
 		editPostsInit: function(){
 			var that = this;
 			if ($("#left_drawer_icon").length && $(".editor").length){
@@ -132,6 +152,7 @@ var ohey = (function($){
 				 window.addEventListener('resize', function() {
 				  $("#container").height(that.getEditorHeight($(".main"))+"px");
 				});
+
 
 				//initialize left drawer
 				$("#left_drawer_icon").on("click", function(){	

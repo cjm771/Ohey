@@ -16,6 +16,13 @@
 			<%= link_to "Login", login_path %>
 			<%= link_to "Register", register_path %>
 			<% else %>
+			<% if @current_user.has_open_invites? %>
+				<%= link_to  @current_user.open_invites_count, config_path+"#invites",
+					 :data => {:placement => :bottom},
+					 :title => "You have #{@current_user.open_invites_count} open #{"invite".pluralize  @current_user.open_invites_count }",
+					 :class => "has_tooltip open_invites_badge" 
+				%>
+			<% end %>
 			<%= image_tag @current_user.gravatar_url, :class => "gravatar", :title => "Hi, #{@current_user.first_name}!" %>
 			<span class='menu_icon' data-toggle='dropdown'> &#9776;</span>
 			  <ul class="dropdown-menu pull-right" role="menu">

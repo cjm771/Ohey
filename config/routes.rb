@@ -7,6 +7,7 @@ Rails.application.routes.draw do
 
   get "/my-posts" => "users#my_posts", as: :my_posts
   patch "/load-blog/:id" => "users#load_blog", as: :load_blog
+  get "/invite/:id" => "roles#show", as: :invite
   get "/register" => "users#new", as: :register
   delete "/logout" => "sessions#destroy", as: :logout
   get "/login" => "sessions#new", as: :login

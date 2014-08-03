@@ -3,11 +3,13 @@ class Role < ActiveRecord::Base
   belongs_to :user
   belongs_to :blog
 
+  before_validation :add_email_if_user_id_is_present 
+  before_save :default_values, on: :create
+
   validates :email, presence: true,
             format: {
                 with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, on: :create 
             }
-
   validate :already_member_or_invited, on: :create
 
   # can only create and edit their own
@@ -26,13 +28,38 @@ class Role < ActiveRecord::Base
   INVITED = 0
   ACTIVE = 1
 
+  STATUS_TEXT = {
+    -1 => "Denied",
+    0 => "Invited",
+    1 => "Active"
+  }
 
   ROLE_TEXT = {
   	0 => "Contributor",
   	1 => "Moderator",
   	2 => "Creator"
   }
+
+  def default_values
+    self.role = 0 
+    self.active = 0
+    self.token = SecureRandom.urlsafe_base64(48)
+    user = User.find_by :email => self.email
+    
+    if user
+      self.user = user 
+    end
+  end
+  
   private 
+
+  def add_email_if_user_id_is_present
+      # check if user id is present
+      if (self.user)
+        self.email = self.user.email
+      end
+  end
+
   def already_member_or_invited
     user = User.find_by :email => self.email
     if (Role.exists?(:blog_id => self.blog.id, :email => self.email ) ||

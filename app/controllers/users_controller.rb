@@ -69,10 +69,12 @@ class UsersController < ApplicationController
 		@user = current_user
 		#all blogs one collaborates on
 		@allRoles = current_user.all_roles
+
 		#active / current blog
 		if current_user.current_blog!=nil
 			@blog = current_user.current_blog  
 			@role = @blog.roles.new
+			@allUsers = @blog.roles.all
 		end
 	end
 

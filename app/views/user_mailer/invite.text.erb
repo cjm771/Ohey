@@ -1,0 +1,3 @@
+<%= @creator.full_name.capitalize %> invites you to collaborate on their blog, '<%= @blog.title.capitalize%>', as a <%= Role::ROLE_TEXT[@role.role] %>. To accept or decline follow the link below.
+
+<%= invite_url @role.token %>
