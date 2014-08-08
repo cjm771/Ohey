@@ -1,4 +1,68 @@
+<div id='homePage' class='floatBox'>
+<div id='splash'>
+	<%= render partial: 'layouts/flash' %>
 
-<h1>This is the home!</h1>
+	<h1><span id='typer'></span></h1>
 
-<%= render partial: 'layouts/flash' %>
+	<div id='register_button' class='btn btn-lg btn-primary'> Try it now!</div>
+</div>
+
+
+</div>
+<div class='content' >
+	<div class='slide'>
+	<h1> How to Use</h1>
+	<%= render partial: "pages/help_diagrams" %>
+	</div>
+
+
+	<div class='slide' style='width: 550px;'>
+		<h1> Meet some Bloggers</h1>
+		<p> As a user, not only can you create your own blogs..but you can also be invited as a collaborator or moderator on other people's blogs!
+		 <%= link_to "View All Users..", users_path %>
+		</p>
+		<br/><br/>
+			<%= render partial: "users/user_bubbles", locals: {users: @users, size: "med", break_at: 9} %>
+	</div>
+
+
+	<div class='slide'>
+
+	<h1> Discover Some Blogs</h1>
+		<p>Check out some blogs. 	
+			<%= link_to "View All Blogs..", blogs_path %>
+		<br/><br/></p>
+		<%= render partial: "blogs/blogs_masonry", locals: {blogs: @blogs, amount: 3} %>
+	</div>
+
+
+	<div class='slide'>
+		<h1>  Latest Posts</h1>
+		<p>The latest posts this site has to offer. <br/><br/></p>
+		<div class='masonry'>
+			<% n = 0 %>
+			<% @posts.each do |b| %>
+			<% n=n+1 %>
+				<%= link_to [b.blog, b], :class=>"nolink" do %>
+				<div class='wiggler box box<%= (@posts.count-n)%4==0 ? 2 : 1%> color<%=rand(0..3) %>'>
+					<div class='box_wpr'>
+						<p style='opacity: .5' class='small'><i>Posted <%= time_ago_in_words b.created_at %></i></p>
+						<h4><%= b.title %></h4>
+						<p class='small'>
+							<%= truncate(strip_tags(b.description),:length=>100) %>
+						</p>
+						<div style='opacity: .9'>
+						<%= image_tag b.user.gravatar_url, :class=> "gravatar_xs " %>
+						<%= "<b>#{b.user.first_name}</b> for <i>#{b.blog.title}</i>".html_safe %>
+						</div>
+					</div>
+				</div>
+				<% end%>
+			<% end %>
+		</div>
+	</div>
+	<%= render partial: "layouts/footer" %>
+</div>
+
+
+

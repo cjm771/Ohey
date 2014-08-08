@@ -1,0 +1,28 @@
+
+<div class='floatBox'>
+	<div class='post_wpr'>
+		<%= render partial: 'posts/single_post', locals: {p: @post} %>
+	</div>
+</div>
+
+<% content_for :body_class do %>
+	blogs_show
+<% end %>
+
+<div id='bl_corner'>
+	<div id='bl_wpr'>
+		<div id='left_drawer_icon' class='drawer_icon glyphicon glyphicon-info-sign'></div>
+	</div>
+</div>
+</div>
+
+<% content_for :left_drawer do %>
+		<%= render partial: 'blogs/blog_drawer', locals: {p: p} %>
+<% end %>
+
+<% content_for :in_header do %>
+<div style='margin-top: 10px'>
+	<a class='about_blog_link' data-drawer-toggle='left' href='#'> <span  class='glyphicon glyphicon-info-sign'></span> <i><span class='extra'>Hide </span> <%=@blog.title%></i> <span class='extra'> Info</span>
+	</a>
+</div>
+<% end %>

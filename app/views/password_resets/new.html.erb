@@ -1,0 +1,15 @@
+<div class='floatBox'>
+<h1>Forgot password</h1>
+
+<%= render partial: 'layouts/flash' %>
+
+<%= form_tag password_resets_path do %>
+  <div class="form-group">
+    <%= text_field_tag :email,nil, :placeholder => "Email", :autocomplete => 'off'  %>
+  </div>
+	<div class="form-group">
+    <%= submit_tag "Reset", :class => "btn btn-primary" %>
+  </div>
+	<%= link_to "Return to Login", login_path %>
+<% end %>
+</div>

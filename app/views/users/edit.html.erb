@@ -42,61 +42,83 @@
 <% if @blog %>
   <!-- blog info --> 
   <div class="tab-pane" id="blogInfo">
-  	<p><br/>You are a <em><%= @current_user.current_role_text %></em> on this blog.</p>
-	<%= form_for @blog, remote: true, :html => {:role => "form"} do |f| %>	
-  	 <div class="form-group">
-    <%= f.text_field :title, :class => "bigger", :placeholder => @current_user.first_name+"'s blog", :autocomplete => 'off' %>
-	  </div>
-	  <div class="form-group">
-	    <%= f.text_area :description, :class => "autosize smaller", :placeholder => "Description",  :autocomplete => 'off'%>
-	  </div>
-  	<% end %>
+  	<p><br/>You are a <em><%= @current_user.current_role_text %></em> on this blog.
+      <% if !@current_user.is_creator? %>
+      Click  <%= link_to "here", blog_role_path(@blog.id, @myRole.id), :method => :delete, data: { confirm: 'Are you sure?' } %> to leave the blog.
+      <br/> <br/>
+      <% else %>
+      Click <%= link_to "here", blog_path(@blog.id), :method => :delete, data: { confirm: 'This will remove the blog, as well as associated member roles and posts. Are you sure?' } %> to delete blog.
+      <% end %>
+      </p>
+     <% if @current_user.current_role == Role::CREATOR %> 
+    	<%= form_for @blog, remote: true, :html => {:role => "form"} do |f| %>	
+      	 <div class="form-group">
+        <%= f.text_field :title, :class => "bigger", :placeholder => @current_user.first_name+"'s blog", :autocomplete => 'off' %>
+    	  </div>
+    	  <div class="form-group">
+    	    <%= f.text_area :description, :class => "autosize smaller", :placeholder => "Description",  :autocomplete => 'off'%>
+    	  </div>
+      	<% end %>
+        <% else %>
+            <div style='width: 300px; margin:0px auto'>
+    <p class='bigger'><%= @blog.title %></p>
+    <p class='smaller'><%= @blog.description %></p>
+    </div>
+
+    <% end %>
   </div>
 
   <!-- users in blog --> 
   <div class="tab-pane" id="users">
-       
-  	<%= form_for [@blog, @role], remote: true, :data => { :success_callback => "addUserSuccess"}, :html => {:role => "form"} do |f| %>	
-  	<%= render partial: 'layouts/form_error', locals: {:_model => @role} %>
-  	 <div class="form-group">
-      <span id='newuser_role' class='has_tooltip' title='Invite as Collaborator. Click to change.'  style='position: relative; '>
-        <span class='newuser_moderator' style='position: absolute; top: -2px; font-size:8px; font-weight: bold; left:-8px; display: none'>M</span>
-    		<span class='icon btn-inline glyphicon glyphicon-user' style='margin-top: 8px; margin-right: 15px'>
-        </span>
-      </span>
-      <%= f.hidden_field :role, :value => 0,  :autocomplete => 'off', :data => {:noAutoSubmit => true }  %>
-       <%= f.text_field :email, :placeholder => "Enter Email", :autocomplete => 'off', :data => {:noAutoSubmit => true }  %>
+    <% if @current_user.current_role > Role::CONTRIBUTOR %> 
+    	<%= form_for [@blog, @role], remote: true, :data => { :success_callback => "addUserSuccess"}, :html => {:role => "form"} do |f| %>	
+      	<%= render partial: 'layouts/form_error', locals: {:_model => @role} %>
+      	 <div class="form-group">
+          <span id='newuser_role' class='<%= "disabled" if !@current_user.is_creator? %> has_tooltip' title='Invite as Collaborator. <%= "Click to change." if @current_user.is_creator? %>'  style='position: relative; '>
+            <span class='newuser_moderator' style='position: absolute; top: -2px; font-size:8px; font-weight: bold; left:-8px; display: none'>M</span>
+        		<span class='icon btn-inline glyphicon glyphicon-user' style='margin-top: 8px; margin-right: 15px'>
+            </span>
+          </span>
+          <%= f.hidden_field :role, :value => 0,  :autocomplete => 'off', :data => {:noAutoSubmit => true }  %>
+           <%= f.text_field :email, :placeholder => "Enter Email", :autocomplete => 'off', :data => {:noAutoSubmit => true }  %>
 
-  		<%= f.submit "+", :class => "btn btn-primary btn-inline icon" %>
+      		<%= f.submit "+", :class => "btn btn-primary btn-inline icon" %>
 
-  	</div> 
-  	<% end %>
+      	</div> 
+    	<% end %>
+    <% end %>
     <div class='users_table'>
       <table>
-        <% @allUsers.each do |u| %>
-            <tr class='<%= Role::STATUS_TEXT[u.active].downcase  %>'>
-              <td>
+        <% @allUsers.order([:active, :role]).reverse.each do |u| %>
+            <tr class='<%= Role::STATUS_TEXT[u.active].downcase  %>' <%= "style='font-weight: bold'".html_safe if (u.user && is_current?(u.user))  %> >
+              <td >
                   <% if is_current? u.user %>
                       <%= image_tag  @current_user.gravatar_url, :class => "gravatar_sm"  %> 
                  <% else %>
-                    <%= image_tag  User::gravatar_url(u.email), :class => "gravatar_sm" if u.email %> 
+                    <%= image_tag  User::gravatar_url(u.email||u.user.email), :class => "gravatar_sm" if u.email||u.user.email %> 
                   <% end %>
 
-                <%= u.user ? is_current?(u.user) ? "You" : u.user.full_name : @current_user.is_creator? ? u.email : u.email.split("@")[0]+"@ ... " %> 
-              <% if !is_current? u.user %> 
+                <% userName =  u.user ? is_current?(u.user) ? "You" : u.user.full_name : @current_user.is_creator? ? u.email : u.email.split("@")[0]+"@ ... " %> 
+                <%= !u.user ? userName : link_to(userName, u.user, :class => "nolink", :target => "_blank") %>
+               <% if @current_user.can_edit_role?(u) && !is_current?(u.user) %>
                 <%= link_to "", blog_role_path(@blog.id, u.id), :method => :delete, data: { confirm: 'Are you sure?' }, :class => 'icon delete_icon glyphicon glyphicon-remove' %>
                <% end %>
               </td>
               <td>
                 <span class='role_name'><%= Role::ROLE_TEXT[u.role] %> </span>
 
-                <% if !is_current? u.user %>
+                <% if @current_user.can_edit_role?(u) && !is_current?(u.user) %>
                   <%= form_for [@blog, u], remote: true, :data => { :success_callback => "changeRoleSuccess"}, :html => { :role => "form"}  do |f| %>
                   <%= f.hidden_field :role,  :autocomplete => 'off'  %>
                   <span class='changeRole_icon icon glyphicon glyphicon-wrench'></span>
                   <% end %>
                 <% end %> </td>
-              <td><i><%= Role::STATUS_TEXT[u.active] %></i></td>
+              <td>
+               <% if @current_user.can_edit_role?(u) && u.active==0 %>
+                  <span class='zeroClipboard glyphicon glyphicon-paperclip has_tooltip' title='Copy Invite URL to clipboard' data-clipboard-text='<%= invite_url (u.token) %>'></span>
+               <% end %>
+                <i><%= Role::STATUS_TEXT[u.active] %></i>
+              </td>
             </tr>
         <% end %>
       </table>
@@ -107,8 +129,8 @@
  <% end %>
   <!-- profile --> 
   <div class="tab-pane" id="profile">
-  	<%= image_tag @current_user.gravatar_url, :class => 'gravatar has_tooltip', :data => {:placement => "right"} ,:title => "Change profile image via gravatar.com." %>
-  	<%= form_for @current_user, remote: true,  :html => {:role => "form"} do |f| %>	
+  	<%= image_tag @current_user.gravatar_url, :class => 'gravatar has_tooltip wiggler', :data => {:placement => "right"} ,:title => "Change profile image via gravatar.com." %>
+  	<%= form_for @current_user, :url => user_path(@current_user.id), remote: true,  :html => {:role => "form"} do |f| %>	
   	 <div class="form-group">
     <%= f.text_field :first_name, :placeholder => "First Name", :autocomplete => 'off' %>
 	  </div>
@@ -135,8 +157,11 @@
             <tr class='<%= Role::STATUS_TEXT[i.active].downcase  %>'>
               <td><%=  image_tag  i.blog.user.gravatar_url, :class => "gravatar_sm" %> <b><%= i.blog.user.first_name.capitalize %></b> invites you to be a <b><%= Role::ROLE_TEXT[i.role] %></b> on '<%=i.blog.title %>'  </td>
               <td>
-                  <a class='icon glyphicon glyphicon-ok has_tooltip' title='Accept'></a>
-                  <a class='icon glyphicon glyphicon-remove has_tooltip' title='Deny'></a>
+                     <%= link_to "", accept_invite_path(i.token), :class=>"icon glyphicon glyphicon-ok has_tooltip", :title =>"Join" %>
+                     <%= form_for i, url: deny_invite_path(i.token), :html => {:class => "inline"} do |f| %>
+                      <%= f.hidden_field :active, value: -1 %>
+                      <span class="icon glyphicon glyphicon-remove has_tooltip" title ="Deny" data-input='submit' ></span>
+                     <% end %>
                 </td>
             </tr>
         <% end %>

@@ -1,0 +1,21 @@
+<div class='floatBox'>
+	<%= image_tag @user.gravatar_url, :class=> "gravatar-lrg" %>
+	<h1><%= @user.full_name.titleize %></h1>
+	<p>
+		<%= auto_link simple_format @user.about %>
+	</p>
+	<br/><br/>
+	<div class='user_blogs_wpr'>
+		<% n = 0 %>
+		<% @user.roles.each do |r| %>
+		<% n=n+1 %>
+			<%= link_to r.blog, :class=>'blog_circle nolink has_tooltip wiggler '+r.get_role_text.downcase,:data=>{:html => true, :placement=>"bottom"}, :title=> "<b>"+@user.first_name+"</b> is a <b>"+r.get_role_text+"</b> for <i>"+r.blog.title+"</i>.<p class='blog_descrip'> "+r.blog.description+"</p>" do %>
+				<span><%= r.blog.title %></span>
+			<% end %>
+			<% if n%5==0 %>
+				<div></div>
+			<% end %>
+
+		<% end %>
+	</div>
+</div>

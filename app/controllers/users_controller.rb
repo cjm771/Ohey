@@ -6,7 +6,17 @@ class UsersController < ApplicationController
 
 	def new
 		@user =User.new
+		@email = params[:email]||nil
 	end
+
+	def show
+		@user = User.friendly.find(params[:id])
+	end
+
+	def index
+		@users = User::ranked_users
+	end
+	
 
 	def create
 		@user = User.new(user_params)
@@ -15,7 +25,7 @@ class UsersController < ApplicationController
 		  if @user.save
 		    session[:user_id] = @user.id
 		    flash[:success] = "Thanks for signing up!"
-		    format.html { redirect_to new_blog_path, success: "Thanks for signing up!" }
+		    format.html { redirect_to session[:return_to]||new_blog_path, success: "Thanks for signing up!" }
 		    format.json { render :show, status: :created, location: @user }
 		  else
 		    format.html { render :new }
@@ -67,12 +77,14 @@ class UsersController < ApplicationController
 
 		#me 
 		@user = current_user
+
 		#all blogs one collaborates on
 		@allRoles = current_user.all_roles
 
 		#active / current blog
 		if current_user.current_blog!=nil
 			@blog = current_user.current_blog  
+			@myRole = @user.get_role @blog
 			@role = @blog.roles.new
 			@allUsers = @blog.roles.all
 		end

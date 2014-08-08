@@ -1,0 +1,38 @@
+<div class='floatBox'>
+	<!--<div class='head_wpr'>
+		<div class='head'>
+
+		<h1 class='title'><%= @blog.title %></h1>
+		<a href='#'>About</a>
+		</div>
+	</div>-->
+	<% if @blog.published_posts.any? %>
+		<div class='post_wpr'>
+		<% @blog.published_posts.reverse.each do |p| %>
+			<%= render partial: 'posts/single_post', locals: {p: p} %>
+		<% end %>
+		</div>
+	<% else %>
+		<div style='text-align: center; margin: 100px auto; font-size: 24px; font-style: italic; '> No Posts have been made yet!</div>
+	<% end %>
+
+</div>
+
+
+
+<div id='bl_corner'>
+	<div id='bl_wpr'>
+		<div id='left_drawer_icon' class='drawer_icon glyphicon glyphicon-info-sign'></div>
+	</div>
+</div>
+</div>
+
+<% content_for :left_drawer do %>
+		<%= render partial: 'blogs/blog_drawer' %>
+<% end %>
+
+<% content_for :in_header do %>
+<div style='margin-top: 10px'>
+<a class='about_blog_link' data-drawer-toggle='left' href='#'> <span  class='glyphicon glyphicon-info-sign'></span> <i><span class='extra'>Hide </span> <%=@blog.title%></i> <span class='extra'> Info</span'></a>
+</div>
+<% end %>

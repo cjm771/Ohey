@@ -1,0 +1,10 @@
+<div class='floatBox'>
+	<div style='width: 550px; margin: 0px auto;'>
+	<%= render partial: "users/user_bubbles", locals: {users: @users, size: "lrg", break_at: 7 } %>
+	</div>
+</div>
+
+<%= content_for :in_header do %>
+<br/>
+<b> All the Bloggers!</b>
+<% end %>

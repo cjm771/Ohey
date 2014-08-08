@@ -1,0 +1,26 @@
+<h4>
+	<div class='blog_info'>
+ 		 <h4 class='title'><%= link_to @blog.title, @blog, :class => 'nolink' %></h4>
+ 		 <div class='description'><%= @blog.description %></div>
+
+ 		  <p> <br/><br/>
+ 		  	<p>Author: <b><%= link_to @blog.user.full_name, @blog.user %></b></p>
+ 		  	Created: <b><%= (time_ago_in_words @blog.created_at) + " ago" %> </b></p>
+ 		  	Posts: <b><%= @blog.published_posts.count %></b> / Members: <b><%= @blog.active_roles.count %>  </b></p>
+ 		  	<hr/>
+ 		  	<div class='users_wpr'>
+ 		  		
+ 		  		<% n = 0 %>
+ 		  	<% (@blog.active_roles).each do |r| %>
+ 		  	<% n=n+1 %>
+ 		  		<%= link_to r.user do %>
+ 		  			<%= image_tag r.user.gravatar_url, :class=> "gravatar_sm wiggler has_tooltip",:data=>{:placement=> "right"}, :title=> r.user.full_name %>
+ 		  		<% end %>
+ 		  		<% if n%7==0 %>
+				<div></div>
+				<% end %>
+ 		  	<% end %>
+ 		  </div>
+	</div>
+</h4>
+

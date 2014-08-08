@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140801224100) do
+ActiveRecord::Schema.define(version: 20140805221643) do
 
   create_table "blogs", force: true do |t|
     t.string   "title"
@@ -20,8 +20,10 @@ ActiveRecord::Schema.define(version: 20140801224100) do
     t.text     "options"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "slug"
   end
 
+  add_index "blogs", ["slug"], name: "index_blogs_on_slug", unique: true
   add_index "blogs", ["user_id"], name: "index_blogs_on_user_id"
 
   create_table "posts", force: true do |t|
@@ -32,9 +34,11 @@ ActiveRecord::Schema.define(version: 20140801224100) do
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "slug"
   end
 
   add_index "posts", ["blog_id"], name: "index_posts_on_blog_id"
+  add_index "posts", ["slug"], name: "index_posts_on_slug", unique: true
   add_index "posts", ["user_id"], name: "index_posts_on_user_id"
 
 # Could not dump table "roles" because of following NoMethodError
@@ -50,8 +54,12 @@ ActiveRecord::Schema.define(version: 20140801224100) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "current_blog_id"
+    t.string   "password_reset_token"
+    t.string   "slug"
   end
 
   add_index "users", ["current_blog_id"], name: "index_users_on_current_blog_id"
+  add_index "users", ["password_reset_token"], name: "index_users_on_password_reset_token"
+  add_index "users", ["slug"], name: "index_users_on_slug", unique: true
 
 end

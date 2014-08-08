@@ -1,5 +1,7 @@
 <div class='floatBox'>
 <h1>Wanna Register?</h1>
+<%= render partial: 'layouts/flash' %>
+
 <%= form_for @user, :html => {:role => "form"} do |f| %>
   <% if @user.errors.any? %>
     <div id="error_explanation">
@@ -20,7 +22,7 @@
     <%= f.text_field :last_name, :placeholder => "Last Name",  :autocomplete => 'off'%>
   </div>
   <div class="form-group">
-    <%= f.text_field :email, :placeholder => "Email", :autocomplete => 'off'  %>
+    <%= f.text_field :email, :placeholder => "Email", :autocomplete => 'off', :value=>@email %>
   </div>
   <div class="form-group">
     <%= f.password_field :password,  :placeholder => "Password"%>

@@ -4,7 +4,7 @@ class Role < ActiveRecord::Base
   belongs_to :blog
 
   before_validation :add_email_if_user_id_is_present 
-  before_save :default_values, on: :create
+  before_create :default_values
 
   validates :email, presence: true,
             format: {
@@ -43,14 +43,16 @@ class Role < ActiveRecord::Base
   def default_values
     self.role = 0 if self.role==nil
     self.active = 0 if self.active==nil
-    self.token = SecureRandom.urlsafe_base64(48)
+    self.token = SecureRandom.urlsafe_base64(48) if self.token==nil
     user = User.find_by :email => self.email
     
     if user
       self.user = user 
     end
   end
-  
+  def get_role_text
+    Role::ROLE_TEXT[self.role]
+  end
   private 
 
   def add_email_if_user_id_is_present

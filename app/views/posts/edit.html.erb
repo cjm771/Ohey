@@ -1,5 +1,5 @@
 <div class='editor'>
-<%= form_for [@blog, @post], remote: true, :html => {:role => "form"} do |f|  %>
+<%= form_for [@blog, @post], :url => blog_post_path(@blog.id, @post.id), remote: true, :html => {:role => "form"} do |f|  %>
 
   <div class="form-group">
     <%= f.text_field :title, :class => "bigger", :placeholder => "Title goes here..", :autocomplete => 'off'  %>
@@ -41,7 +41,7 @@
     </h4>
     <p><i>Updated <b data-updated-sync data-time="<%= @post.updated_at.strftime('%Y-%m-%dT%H:%M:%S%z'); %>"><%= (time_ago_in_words @post.updated_at) + " ago" %></b></i></p>
     <br/>
-    <%= form_for [@blog, @post], remote: true, :html => {:role => "form"} do |f|  %>
+    <%= form_for  [@blog, @post], :url => blog_post_path(@blog.id, @post.id), remote: true, :html => {:role => "form"} do |f|  %>
       <%= f.check_box :published  %>
     <% end %>
     <p> <br/><br/>Created: <%= (time_ago_in_words @post.created_at) + " ago" %> <br/>Author: <%=@post.user.full_name%></p>

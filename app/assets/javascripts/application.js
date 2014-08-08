@@ -1,6 +1,7 @@
 //= require jquery
 //= require jquery_ujs
 //= require_tree .
+//= require zeroclipboard
 
 "use strict";
 
@@ -98,11 +99,12 @@ var ohey = (function($){
 		slideLeft : function(el, startfinish){
 			var that = this;
 			startfinish = (startfinish!=undefined) ? startfinish : {start : -1*el.width(), end: 0};
+				$(".drawer").height(that.getEditorHeight($(".main")));
 			el.css("margin-left", (startfinish.start)+"px").show().animate({"margin-left": startfinish.end+"px"},{
 				duration : 300,
 				queue : false,
 				complete : function(){
-					$("#container").height(that.getEditorHeight($(".main"))+"px");
+				 	$(".drawer").height(that.getEditorHeight($(".main")));
 				}
 			});
 
@@ -117,31 +119,37 @@ var ohey = (function($){
 			});
 		},
 		getEditorHeight : function(el){
-			var elH =  (el==undefined) ? $(window).height() : el.offset().top+el.outerHeight(true);//returns window height
-			var winH = $(window).height()
-			var docH = document.body.scrollHeight;
+			var body = document.body,
+    		    html = document.documentElement;
+			var docH = Math.max( body.scrollHeight, body.offsetHeight, 
+			                       html.clientHeight, html.scrollHeight, html.offsetHeight );
+			var elH =  (el==undefined) ? docH : el.offset().top+el.outerHeight(true);//returns window height
+			var winH = $(window).height();
 			var ret =  (elH<=winH) ? winH : elH;
+			console.log("elh: "+elH+" winH: "+winH+" jquery doc height:"+$("body")[0].scrollHeight);
 			return ret;
 		},
 		changeRoleInit : function(){
 			var that = this;
 			//for new users change role
-			if ("#newuser_role .newuser_moderator"){
-				 $("#newuser_role").on("click", function(){
-				 	var moderator = $(this).find(".newuser_moderator");
-				 	if (moderator.is(":visible")){
-				 		$("form.new_role #role_role").val(0);
-				 		moderator.hide();
-				 		$(this).attr("title", 'Invite a Collaborator. Click to change.');
-				 	}
-				 	else{
-				 		moderator.show();
-				 		$("form.new_role #role_role").val(1);
-				 		$(this).attr("title", 'Invite a Moderator. Click to change.');
-				 		
-				 	}
-				 	that.reloadTooltip();
-				 });
+			if ($("#newuser_role .newuser_moderator")){
+				if (!$("#newuser_role").hasClass("disabled")){
+					 $("#newuser_role").on("click", function(){
+					 	var moderator = $(this).find(".newuser_moderator");
+					 	if (moderator.is(":visible")){
+					 		$("form.new_role #role_role").val(0);
+					 		moderator.hide();
+					 		$(this).attr("title", 'Invite a Collaborator. Click to change.');
+					 	}
+					 	else{
+					 		moderator.show();
+					 		$("form.new_role #role_role").val(1);
+					 		$(this).attr("title", 'Invite a Moderator. Click to change.');
+					 		
+					 	}
+					 	that.reloadTooltip();
+					 });
+				}
 			}
 			//for existing user change role
 			$(".users_table .changeRole_icon").on("click", function(){
@@ -200,6 +208,43 @@ var ohey = (function($){
 				$("#left_drawer_icon").trigger("click");
 			});
 		},
+		blogInit : function(){
+			if ($(".blogs_show").length){
+				$(".drawer.left").on("ohey.drawerOpen", function(){
+					$("#header").addClass('drawer_open');
+				});
+				$(".drawer.left").on("ohey.drawerClosed", function(){
+					$("#header").removeClass('drawer_open');
+				});
+			}
+		},
+		leftDrawerInit : function(){
+			var that = this;
+			//initialize left drawer
+			$("#left_drawer_icon, [data-drawer-toggle]").on("click", function(){	
+
+				var el = $(".drawer.left");
+				if (!el.hasClass("open")){
+					el.addClass("open");
+					that.slideLeft(el);
+					that.slideLeft($(".main"), {start: 0, end: 300});
+					$(this).addClass("active");
+					el.trigger("ohey.drawerOpen");
+				}
+				else{
+					el.removeClass("open")
+					that.unslideLeft(el);
+					that.unslideLeft($(".main"), {start: 300, end: 0});
+					$(this).removeClass("active");
+					el.trigger("ohey.drawerClosed");
+				}
+			});
+
+			//resize function
+			 window.addEventListener('resize', function() {
+			 $(".drawer").height(that.getEditorHeight($(".main")));
+			});
+		},
 		editPostsInit: function(){
 			var that = this;
 			//set up hotkeys
@@ -220,33 +265,10 @@ var ohey = (function($){
 				 $('.editor .rt-textArea').on('input', function() {
  					 //edit container to match
  					 $(".editor .form-group textarea").html($(this).html()).trigger("change");
- 					 $("#container").height(that.getEditorHeight($(".main"))+"px");
-				});
-
-				 //resize function
-				 window.addEventListener('resize', function() {
-				  $("#container").height(that.getEditorHeight($(".main"))+"px");
+ 					$(".drawer").height(that.getEditorHeight($(".main"))+20);
 				});
 
 
-				//initialize left drawer
-				$("#left_drawer_icon").on("click", function(){	
-
-					var el = $(".drawer.left");
-					if (!el.hasClass("open")){
-						el.addClass("open");
-						that.slideLeft(el);
-						that.slideLeft($(".rt-wpr"), {start: 0, end: 300});
-						$(this).addClass("active");
-					}
-					else{
-						el.removeClass("open")
-						that.unslideLeft(el);
-						that.unslideLeft($(".rt-wpr"), {start: 300, end: 0});
-						$(this).removeClass("active");
-
-					}
-				});
 
 				//add savers for
 				this.ajaxSaver($('.drawer.left input,.editor input,.editor textarea'));
@@ -262,7 +284,6 @@ var ohey = (function($){
 					}
 				});
 				//init height thing
-				$("#container").height(that.getEditorHeight($(".main"))+"px");
 			}
 		},
 		updateUpdatedEls : function(){
@@ -281,16 +302,76 @@ var ohey = (function($){
 			    $('html,body').scrollTop(scrollmem);
 			  });
 		},
+		fakeSubmitsInit : function(){
+			$("[data-input='submit']").on("click", function(){
+				$(this).closest("form").submit();
+			});
+		},
+		homeInit : function(){
+			if ($("#homePage").length){
+
+
+			$("#register_button").on("click", function(){
+				 $('html,body').animate({scrollTop :0});
+				introJs().setOptions({ 
+					'skipLabel': 'Exit', 
+					'tooltipPosition': 'bottom-right-aligned',
+					'showButtons': false,
+					'showStepNumbers': false,
+					'showBullets' : false,
+				}).start();
+
+
+
+				$(".introjs-helperLayer").on("mouseover", function(e){
+					introJs().exit();
+				});
+			});
+			
+
+		
+
+		      $("#typer").css({whiteSpace: "pre"}).typed({
+		        strings: ["O..^1000hey.", "Say hey to O..hey.", 
+		         "It's a simple blogging \nplatform built with ❤.",  
+		        "Multiple Blogs.\nMultiple Collaborators.\n Autosave everything.",
+		        "So..^1000try it out dude."],
+		         typeSpeed: 150, // typing speed
+		         loop: true,
+        		 backDelay: 1000 // pause before backspacing
+		      });
+			}
+		},
 		init : function(){
 			var that = this;
 			//auto resize textareas
 			$('textarea.autosize').autosize({append : "\n\n"});
 			//bs tabs click first
    			 $('#settingsTabs li > a:first').tab('show');
+   			 //zeroclipboard
+   			$(".zeroClipboard").each(function(){
+   				  new ZeroClipboard($(this));
+   			  });
    			 //bs tooltips
    			this.reloadTooltip();
+
+   			//masonry
+   			if ($(".masonry").length){
+   				$('.masonry').masonry({
+				  itemSelector: '.box',
+				  columnWidth: 50
+				});
+   			}
+   			//fake submits init
+   			this.fakeSubmitsInit();
+   			//leftDrawer init
+   			this.leftDrawerInit();
+   			//homepage init
+   			this.homeInit();
    			 //settings init
    			 this.settingsInit();
+   			 //blogs init
+   			 this.blogInit();
    			 //edit post
    			 this.editPostsInit();
    			 //data syncs

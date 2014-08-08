@@ -1,11 +1,15 @@
 class BlogsController < ApplicationController
   
   before_action :store_location
-  before_action :require_user
+  before_action :require_user, except: [:index, :show]
    
 
   def new
   	@blog = current_user.blogs.new
+  end
+
+  def index 
+    @blogs = Blog::ranked_blogs
   end
 
   def update
@@ -43,6 +47,38 @@ class BlogsController < ApplicationController
         format.json { render json: @blog_params.errors, status: :unprocessable_entity }
       end
     end
+  end
+
+  def show
+    @blog = Blog.friendly.find(params[:id]);
+  end
+
+  def destroy
+    if !Blog.exists?(:id => params[:id]);
+      redirect_to config_path, notice: "Couldnt find that blog."
+      return
+    end
+     @blog = Blog.find(params[:id]);
+
+    
+     @roles = @blog.roles.map { |x|x.attributes }
+     puts "here are some roles"
+     puts @roles.inspect
+     if @current_user.is_creator? @blog 
+        if @blog.destroy
+            #notify em all
+            @roles.each do |role|
+              if role['user_id'] != @current_user.id && role['active']>0
+               UserMailer.notify_blog_delete(@current_user, @blog, role).deliver
+              end
+            end
+           redirect_to config_path, notice: "Cool. We deleted that blog."
+         else
+            redirect_to config_path, error: "Uh oh, couldn't delete it for some reason. try again later."
+         end
+     else
+      redirect_to config_path, error: "You're not authorized to delete that blog."
+     end
   end
 
     private

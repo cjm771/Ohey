@@ -3,26 +3,31 @@ Rails.application.routes.draw do
   root to: "pages#home"
 
   get "/pages/home"
-  get "/pages/about"
+  get "/about" =>  "pages#about", as: :about
+   get "/help" =>  "pages#help", as: :help
 
   get "/my-posts" => "users#my_posts", as: :my_posts
   patch "/load-blog/:id" => "users#load_blog", as: :load_blog
   get "/invite/:id" => "roles#show", as: :invite
+  patch "/invite/:id/deny" => "roles#deny_invite", as: :deny_invite
+  get "/invite/:id/accept" => "roles#accept_invite", as: :accept_invite
   get "/register" => "users#new", as: :register
   delete "/logout" => "sessions#destroy", as: :logout
   get "/login" => "sessions#new", as: :login
   post "/login" => "sessions#create", as: :sessions
   get "/config" => "users#edit", as: :config
   post "blogs/:blog_id/roles/:id"   => "roles#update"
+  patch "/password_resets/:id/edit" => "password_resets#update", as: :password_reset
 
 
 
   resources :sessions, only: [:new, :create]
-  resources :users, only: [:create, :update]
-
+  resources :users, only: [:create, :index, :update, :show]
+  resources :password_resets, only: [:new, :create, :edit, :update]
+  
   resources :blogs do
-    resources :roles, only: [:new, :update, :create, :destroy]
-    resources :posts 
+    resources :roles, only: [:new, :show, :update, :create, :destroy]
+    resources :posts
   end
 
 

@@ -5,25 +5,43 @@ class PostsController < ApplicationController
     respond_to :json, only: [:update]
 
   def new
-    @post = @blog.posts.create user_id: current_user.id
-    render action: "edit"
+    if @current_user.is_blog_member? @blog.id
+      @post = @blog.posts.create user_id: current_user.id
+      render action: "edit"
+    else
+      redirect_to my_posts_path, notice: "You're not a member of that blog"
+    end
   end
 
   def edit
-    #if this is an actual edit and not a new post
-    @post ||= @blog.posts.find(params[:id])
+   
     
+      @post ||= @blog.posts.find(params[:id])
+        #if this is an actual edit and not a new post
+    if !@current_user.can_edit_post? @post
+       redirect_to my_posts_path, notice: "You're not  authorized to edit that post."
+    end
+  end
+
+  def show 
+    @post = Post.friendly.find(params[:id]);
   end
 
   def update
     @post = @blog.posts.find(params[:id])
-    #need to do can_edit? validation here..if not throw error
+   
     respond_to do |format|
-      if @post.update(post_params)
-         msg = { :status => "ok", :message => "Success!" }
-        format.json { render :json => msg }
+       #need to do can_edit? validation here..if not throw error
+      if @current_user.can_edit_post? @post
+        if @post.update(post_params)
+           msg = { :status => "ok", :message => "Success!" }
+          format.json { render :json => msg }
+        else
+          format.json { render json: {:model => @post.reload, :errors => @post.errors}, status: :unprocessable_entity }
+        end
       else
-        format.json { render json: {:model => @post.reload, :errors => @post.errors}, status: :unprocessable_entity }
+        @post.errors.add :title, "You're not authorized to edit this post."
+        format.json { render json: { :errors => @post.errors}, status: :unprocessable_entity }
       end
     end
   end
@@ -31,11 +49,16 @@ class PostsController < ApplicationController
   def destroy
    @post = @blog.posts.find(params[:id])
     #need to do can_edit? validation here..if not throw error
-      if @post.destroy
-        redirect_to my_posts_path, notice: 'Post was successfully deleted.'
-      else
-        flash[:error] = "Unknown error occurred, could not delete '#{@post.title}'." 
-        redirect_to my_posts_path
+      if @current_user.can_edit_post? @post
+        if @post.destroy
+          redirect_to my_posts_path, notice: 'Post was successfully deleted.'
+        else
+          flash[:error] = "Unknown error occurred, could not delete '#{@post.title}'." 
+          redirect_to my_posts_path
+         end
+       else
+          flash[:error] = "You're not authorized to delete this post." 
+          redirect_to my_posts_path
        end
   end
 

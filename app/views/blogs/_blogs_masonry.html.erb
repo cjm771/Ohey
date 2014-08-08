@@ -1,0 +1,20 @@
+<div class='masonry'>
+	<% n=0 %>
+	<% blogs.each do |b| %>
+		<% n=n+1 %>
+		<%= link_to b, :class=>"nolink" do %>
+		<div class='wiggler box box<%= n%amount==0 ? 2 : 1 %> color<%=rand(0..3) %>'>
+			<div class='box_wpr'>
+				<h4 style='padding: 0px;'><%= b.title %></h4>
+				<p class='small'>
+					<%= truncate b.description+b.description, :length => 130 %>
+				</p>
+				<%= image_tag b.user.gravatar_url, :class=> "gravatar_xs " %>
+				<h5 style='opacity: .7'><%= b.active_roles.count.to_s+" user".pluralize(b.active_roles.count) %> /
+					<%= b.published_posts.count.to_s+" post".pluralize(b.published_posts.count) %> 
+				</h5> 
+			</div>
+		</div>
+		<% end %>
+	<% end %>
+</div>

@@ -1,0 +1,10 @@
+<% n=0 %>
+<% (users).first(14).each do |u| %>
+  	<% n=n+1 %>
+  		<%= link_to u do %>
+  			<%= image_tag u.gravatar_url, :class=> "gravatar-"+(size ? size : "med" )+" wiggler has_tooltip", :data=>{:placement=> "right", :html => true}, :title=> u.full_name+" <br><span class='small' style='color: #c0c0c0'> #{u.all_roles.count } Blogs / #{u.posts.count} Posts  </div>" %>
+  		<% end %>
+  		<% if n%break_at==0 %>
+			<div></div>
+		<% end %>
+<% end %>

@@ -1,0 +1,17 @@
+<div class='post_item'>
+	<div class='post_head'>
+		<%= link_to [p.blog, p], :class=>'nolink' do %>
+			<h2 class='title'><%= p.title.capitalize %></h2>
+		<% end %>
+		<div class='info'>
+			<%= link_to p.user, :class=>'nolink' do %>
+			<%= image_tag p.user.gravatar_url, :class => "gravatar_xs" %> <b><%=  p.user.first_name.capitalize %></b>
+			<% end %> posted <i>
+			<%= (time_ago_in_words p.created_at) + " ago" %></i>
+		</div>
+	</div>
+	<div class='description'>
+		<%= p.description.html_safe %>
+	</div>
+	
+</div>

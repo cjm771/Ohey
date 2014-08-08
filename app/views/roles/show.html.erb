@@ -1,0 +1,12 @@
+<div class='floatBox'>
+	
+	<h1> You're Invited!</h1>
+	<p> <%=  image_tag  @inviter.gravatar_url, :class => "gravatar_sm" %> <b><%= @inviter.full_name.capitalize %></b> invites you (<%= @role.email %>) to be a <b><%= Role::ROLE_TEXT[@role.role] %></b> on '<%=@blog.title %>'</p>
+	<div class='invite_options'>
+		 <%= link_to "", accept_invite_path(@role.token), :class=>"icon icon-lrg glyphicon glyphicon-ok has_tooltip", :title =>"Join" %>
+		 <%= form_for @role, url: deny_invite_path(@role.token) do |f| %>
+		  <%= f.hidden_field :active, value: -1 %>
+		  <span class="icon icon-lrg glyphicon glyphicon-remove has_tooltip" title ="Deny" data-input='submit' ></span>
+		 <% end %>
+	</div>
+</div>
