@@ -1012,10 +1012,7 @@ body.pages_home #menu .menu_icon{
 	color: #fff;
 	padding: 10px;
 	height: 195px;
-	vertical-align: middle;
-	 -webkit-transform-style: preserve-3d;
-  -moz-transform-style: preserve-3d;
-  transform-style: preserve-3d;
+	display: table;
 }
 .content .masonry .box2{
 	width: 395px;
@@ -1027,9 +1024,9 @@ body.pages_home #menu .menu_icon{
 
 .content .masonry .box .box_wpr{
    position: relative;
-  top: 50%;
-  transform: translateY(-50%);
-  margin-top: -10px;
+   height: 100%;
+   display: table-cell;
+   vertical-align: middle;
 }
 
 
