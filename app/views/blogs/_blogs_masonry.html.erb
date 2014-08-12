@@ -7,7 +7,7 @@
 			<div class='box_wpr'>
 				<h4 style='padding: 0px;'><%= b.title %></h4>
 				<p class='small'>
-					<%= truncate b.description+b.description, :length => 130 %>
+					<%= truncate b.description, :length => 130 %>
 				</p>
 				<%= image_tag b.user.gravatar_url, :class=> "gravatar_xs " %>
 				<h5 style='opacity: .7'><%= b.active_roles.count.to_s+" user".pluralize(b.active_roles.count) %> /
