@@ -68,9 +68,11 @@ class PostsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_blog
-      @blog = current_user.current_blog
-      if !@blog
-        redirect_to my_posts_path
+      if current_user
+        @blog = current_user.current_blog
+        if !@blog
+          redirect_to my_posts_path
+        end
       end
     end
 
