@@ -35,7 +35,8 @@ class UsersController < ApplicationController
 	end
 
 	def load_blog
-		if current_user.is_blog_member? params[:id]  &&  current_user.update_attribute(:current_blog_id,params[:id])
+		if current_user.is_blog_member? params[:id] 
+			current_user.update_attribute(:current_blog_id,params[:id])
 			flash[:notice] = "Successfully loaded '#{current_user.current_blog.title}'"
 		else
 			blog = Blog.find(params[:id])
