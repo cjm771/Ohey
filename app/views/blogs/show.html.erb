@@ -8,7 +8,7 @@
 	</div>-->
 	<% if @blog.published_posts.any? %>
 		<div class='post_wpr'>
-		<% @blog.published_posts.reverse.each do |p| %>
+		<% @blog.published_posts.order(:id).reverse.each do |p| %>
 			<%= render partial: 'posts/single_post', locals: {p: p} %>
 		<% end %>
 		</div>

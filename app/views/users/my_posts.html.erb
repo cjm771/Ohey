@@ -24,7 +24,7 @@
 		</tr>
 		</thead>
 		<tbody>
-			<% @blog.posts.reverse.each do |p| %>
+			<% @blog.posts.order(:id).reverse.each do |p| %>
 				<% if p.published || p.user==@current_user || @current_user.can_edit_post?(p) %>
 					<tr class='post_item'>
 						<td style='position: relative'>
