@@ -1,6 +1,6 @@
 class PostsController < ApplicationController
     before_action :store_location
-    before_action :require_user
+    before_action :require_user, except: [:show]
     before_action :set_blog
     respond_to :json, only: [:update]
 
@@ -24,7 +24,10 @@ class PostsController < ApplicationController
   end
 
   def show 
-    @post = Post.friendly.find(params[:id]);
+    @post = Post.friendly.find(params[:id])
+    if (@post)
+       @blog = @post.blog
+    end    
   end
 
   def update
