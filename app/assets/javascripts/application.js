@@ -11,6 +11,9 @@ var ohey = (function($){
 			var options = ["Contributor", "Moderator"];
 			$(el).closest("td").find("span.role_name").text(options[resp.role]);
 		},
+		isIOS : function(){
+			return ( navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false );
+		},
 		addUserSuccess : function(){
 			location.reload();
 		},
@@ -352,6 +355,12 @@ var ohey = (function($){
    			$(".zeroClipboard").each(function(){
    				  new ZeroClipboard($(this));
    			  });
+
+   			if (this.isIOS()){
+   				$("#menu #menu_wpr").css({
+   					opacity: "1 !important"
+   				});
+   			}
    			 //bs tooltips
    			this.reloadTooltip();
 
