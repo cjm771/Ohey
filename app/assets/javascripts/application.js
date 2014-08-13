@@ -357,7 +357,7 @@ var ohey = (function($){
    			  });
 
    			if (this.isIOS()){
-   				$("#menu > #menu_wpr").css({
+   				$("#menu > #menu_wpr,#br_corner #br_wpr,#bl_corner #bl_wpr").css({
    					opacity: "1"
    				});
    			}
