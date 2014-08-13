@@ -357,8 +357,8 @@ var ohey = (function($){
    			  });
 
    			if (this.isIOS()){
-   				$("#menu #menu_wpr").css({
-   					opacity: "1 !important"
+   				$("#menu > #menu_wpr").css({
+   					opacity: "1"
    				});
    			}
    			 //bs tooltips
